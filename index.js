@@ -12,11 +12,11 @@ module.exports = (opt = {}) => {
   const options = parser(opt);
 
   const request = req => {
-    if (req.method == "POST" && req.body != null) {
+    if (req.method == "POST") {
       req.verifyHuman = async expect => {
         if (options.ignore) return true;
         const response = req.body["turnstile-response"];
-        if (!code) return false;
+        if (!response) return false;
         const r = await axios.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
           "secret": options.secret, response
         });
