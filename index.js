@@ -25,7 +25,7 @@ module.exports = (opt = {}) => {
     }
   };
 
-  const processor = (html, req) => {
+  const processorSetup = html => {
     const ts = html("[null-turnstile]");
     for (let i = 0; i < ts.length; i++) {
       const t = ts.eq(i);
@@ -36,9 +36,10 @@ module.exports = (opt = {}) => {
       const action = t.attr("null-turnstile");
       t.attr("null-turnstile", null);
       t.attr("data-action", action);
-      req.hasTurnstile = true;
     }
-    if (html("head").length && req.hasTurnstile) {
+  };
+  const processorRender = html => {
+    if (html(".cf-turnstile").length) {
       html("head").append(`
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
       `);
@@ -55,10 +56,16 @@ module.exports = (opt = {}) => {
       await prevHook(req, res);
     };
 
-    const prevProc = options.preprocessor;
+    const prevPreProc = options.preprocessor;
     options.preprocessor = async (html, req, res) => {
-      await prevProc(html, req, res);
-      processor(html, req);
+      await prevPreProc(html, req, res);
+      processor(html);
+    };
+
+    const prevPostProc = options.postprocessor;
+    options.postprocessor = async (html, req, res) => {
+      await prevPostProc(html, req, res);
+      processorRender(html);
     };
   };
 
