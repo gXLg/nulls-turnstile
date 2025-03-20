@@ -59,7 +59,7 @@ module.exports = (opt = {}) => {
     const prevPreProc = options.preprocessor;
     options.preprocessor = async (html, req, res) => {
       await prevPreProc(html, req, res);
-      processor(html);
+      processorSetup(html);
     };
 
     const prevPostProc = options.postprocessor;
