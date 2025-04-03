@@ -49,21 +49,21 @@ module.exports = (opt = {}) => {
     }
   };
 
-  return options => {
-    const prevHook = options.hook;
-    options.hook = async (req, res) => {
+  return noptions => {
+    const prevHook = noptions.hook;
+    noptions.hook = async (req, res) => {
       request(req);
       await prevHook(req, res);
     };
 
-    const prevPreProc = options.preprocessor;
-    options.preprocessor = async (html, req, res) => {
+    const prevPreProc = noptions.preprocessor;
+    noptions.preprocessor = async (html, req, res) => {
       await prevPreProc(html, req, res);
       processorSetup(html);
     };
 
-    const prevPostProc = options.postprocessor;
-    options.postprocessor = async (html, req, res) => {
+    const prevPostProc = noptions.postprocessor;
+    noptions.postprocessor = async (html, req, res) => {
       await prevPostProc(html, req, res);
       processorRender(html);
     };
